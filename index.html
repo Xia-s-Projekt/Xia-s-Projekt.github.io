@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xia's Projekt - Download Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div id="app">
+  <nav>
+    <div class="nav-logo" onclick="navigateHome()">Xia's Projekt</div>
+    <div class="nav-controls">
+      <div class="nav-tag"></div>
+      <button id="theme-toggle" class="btn-dl secondary nav-btn">Toggle Theme</button>
+    </div>
+  </nav>
+
+  <div id="page-home" class="page active">
+    <div class="section-label" style="margin-top: 40px;">
+      <span>Available ROM Ports</span>
+    </div>
+
+    <div class="cards-grid" id="cards-container"></div>
+    <footer>Xia's Projekt . <span id="footer-year"></span></footer>
+  </div>
+
+  <div id="page-detail" class="page">
+    <div class="detail-container">
+      <div class="back-btn" onclick="navigateHome()">Back to all ROMs</div>
+      <div id="detail-content"></div>
+    </div>
+    <footer>Xia's Projekt . <span class="footer-year-d"></span></footer>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
