@@ -215,7 +215,8 @@ nav {
 }
 
 .card-img {
-  height: 190px;
+  aspect-ratio: 16 / 9;
+  height: auto;
   overflow: hidden;
   position: relative;
   background: var(--glass-bg);
@@ -326,8 +327,8 @@ nav {
 .back-btn::before { content: '<-'; font-size: 1.1em; }
 
 .detail-hero {
-  display: grid;
-  grid-template-columns: 1fr 1.6fr;
+  display: flex;
+  flex-direction: column;
   gap: 0;
   width: 100%;
   margin: 32px 0 48px;
@@ -341,7 +342,9 @@ nav {
 }
 .detail-img {
   position: relative;
-  min-height: 300px;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 500px;
   overflow: hidden;
 }
 .detail-img img {
@@ -353,11 +356,11 @@ nav {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, transparent 70%, var(--bg-color));
-  opacity: 0.7;
+  background: linear-gradient(to top, var(--glass-overlay) 0%, transparent 40%);
+  opacity: 0.8;
 }
 .detail-info {
-  padding: 48px 44px;
+  padding: 32px 44px 48px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -543,9 +546,8 @@ footer {
   .section-label { padding: 0 20px; }
   .detail-container { padding: 0 20px; }
   .back-btn { margin: 20px 0 0; }
-  .detail-hero { grid-template-columns: 1fr; margin: 20px 0 32px; }
+  .detail-hero { margin: 20px 0 32px; }
   .detail-img { min-height: 200px; }
-  .detail-img::after { background: linear-gradient(to top, var(--glass-overlay), transparent); }
   .detail-info { padding: 28px 24px; }
   .section-header { flex-direction: column; align-items: flex-start; gap: 16px; padding: 0 20px;}
   .dl-group { padding: 0 20px; }
