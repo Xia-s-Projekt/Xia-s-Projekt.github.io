@@ -7,15 +7,8 @@ const OS_DATA = [
     shortDesc: "Nothing OS port with dot-matrix design.",
     fullDesc: "A ported version of Nothing OS bringing the dot-matrix design and smooth performance to your devices.",
     changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-04-03",
-    uploadDate: "2026-04-04",
     guideFile: "guides/nothing-os.md",
     downloads: [
-      /**{
-        group: "Stable Releases",
-        items: [
-          { name: "Nothing OS 4.0 Stable", version: "V1", tag: "STABLE", device: "Infinix GT 10 Pro", meta: "Android 16 . 3.70 GB", date: "2026-05-10", url: "#" }
-        ]
-      },**/
       {
         group: "Pre-Release",
         items: [
@@ -32,7 +25,6 @@ const OS_DATA = [
     shortDesc: "Oxygen OS port from OnePlus devices.",
     fullDesc: "Experience Oxygen OS with its fast and smooth UI, ported directly from OnePlus firmwares.",
     changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-01-25",
-    uploadDate: "2026-01-24",
     guideFile: "guides/oxygen-os.md",
     downloads: [
       {
@@ -61,7 +53,6 @@ const OS_DATA = [
     shortDesc: "Color OS port from OPPO.",
     fullDesc: "Highly customizable Smart & Smooth Color OS experience ported from official OPPO & OnePlus releases.",
     changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-01-04",
-    uploadDate: "2025-12-26",
     guideFile: "guides/color-os.md",
     downloads: [
       {
@@ -92,7 +83,6 @@ const OS_DATA = [
     shortDesc: "Transsion ecosystem port (HiOS/XOS).",
     fullDesc: "Ported firmware from the Transsion ecosystem, featuring unique system apps and UI components.",
     changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-09-30",
-    uploadDate: "2025-10-09",
     guideFile: "guides/transsion-os.md",
     downloads: [
       {
@@ -114,7 +104,6 @@ const OS_DATA = [
     shortDesc: "Motorola HelloUI port.",
     fullDesc: "Clean and smooth HelloUI ported from Motorola devices.",
     changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-08-18",
-    uploadDate: "2025-09-08",
     guideFile: "guides/hello-ui.md",
     downloads: [
       {
@@ -141,7 +130,6 @@ const OS_DATA = [
     shortDesc: "Xiaomi HyperOS port.",
     fullDesc: "The Xiaomi HyperOS ported to your devices.",
     changelog: "https://telegra.ph/gayper-206-01-26",
-    uploadDate: "2026-01-27",
     guideFile: "guides/hyper-os.md",
     downloads: [
       {
@@ -160,7 +148,6 @@ const OS_DATA = [
     shortDesc: "Vivo Origin OS port.",
     fullDesc: "Origin OS port featuring the distinctive grid layout and dynamic widgets.",
     changelog: "https://telegra.ph/",
-    uploadDate: "2026-01-10",
     guideFile: "guides/origin-os.md",
     downloads: [
       {

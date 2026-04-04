@@ -10,12 +10,31 @@ themeToggle.addEventListener('click', () => {
 
 document.querySelectorAll('#footer-year, .footer-year-d').forEach(el => el.textContent = new Date().getFullYear());
 
+function getLatestDate(os) {
+  let latest = 0;
+  if (os.downloads) {
+    os.downloads.forEach(group => {
+      if (group.items) {
+        group.items.forEach(item => {
+          if (item.date) {
+            const time = new Date(item.date).getTime();
+            if (time > latest) {
+              latest = time;
+            }
+          }
+        });
+      }
+    });
+  }
+  return latest;
+}
+
 function buildCards() {
   const container = document.getElementById('cards-container');
   container.innerHTML = '';
   
   const visibleOS = OS_DATA.filter(os => !os.hide).sort((a, b) => {
-    return new Date(b.uploadDate) - new Date(a.uploadDate);
+    return getLatestDate(b) - getLatestDate(a);
   });
 
   const today = new Date();
@@ -23,10 +42,17 @@ function buildCards() {
 
   visibleOS.forEach((os, i) => {
     const totalDownloads = os.downloads.reduce((a, g) => a + g.items.length, 0);
+    const latestTime = getLatestDate(os);
     
-    const uploadDateObj = new Date(os.uploadDate);
-    uploadDateObj.setHours(0, 0, 0, 0);
-    const isNew = uploadDateObj.getTime() === today.getTime();
+    let isNew = false;
+    let formattedDate = "Unknown";
+    
+    if (latestTime > 0) {
+      const uploadDateObj = new Date(latestTime);
+      uploadDateObj.setHours(0, 0, 0, 0);
+      isNew = uploadDateObj.getTime() === today.getTime();
+      formattedDate = new Date(latestTime).toISOString().split('T')[0];
+    }
 
     const tags = new Set();
     os.downloads.forEach(group => {
@@ -61,8 +87,8 @@ function buildCards() {
         <div class="card-title">${os.name}</div>
         <div class="card-desc">${os.shortDesc}</div>
         <div class="card-footer">
-          <div class="card-count">${totalDownloads} download${totalDownloads !== 1 ? 's' : ''} available</div>
-          <div class="card-arrow">-></div>
+          <div class="card-count"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> ${totalDownloads} download${totalDownloads !== 1 ? 's' : ''} available <br> Updated: ${formattedDate}</div>
+          <div class="card-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
         </div>
       </div>`;
     container.appendChild(card);
@@ -98,12 +124,12 @@ window.renderDownloads = function(id, filterValue) {
             <div class="dl-item" style="animation-delay:${(gi * filteredItems.length + ii) * 0.06}s">
               <div class="dl-item-left">
                 <div class="dl-item-name">${item.name}</div>
-                <div class="dl-item-meta">${item.device ? `${item.device} . ` : ''}${item.meta}</div>
+                <div class="dl-item-meta">${item.device ? `${item.device} . ` : ''}${item.meta} . Uploaded: ${item.date}</div>
               </div>
               <div class="dl-item-right">
                 <span class="tag-chip ${item.tag.toLowerCase()}">${item.tag}</span>
                 <span class="tag-chip secondary" style="color:var(--muted);border-color:var(--glass-border);background:var(--glass-bg)">${item.version}</span>
-                <button class="btn-dl primary" onclick="showDownloadWarning('${item.url}')">V Download</button>
+                <button class="btn-dl primary" onclick="showDownloadWarning('${item.url}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download</button>
               </div>
             </div>
           `).join('')}
@@ -208,7 +234,6 @@ let downloadTimerInterval;
 function showDownloadWarning(url) {
   const modal = document.getElementById('dl-warning-modal');
   const proceedBtn = document.getElementById('proceed-btn');
-  const timerSpan = document.getElementById('countdown-timer');
 
   clearInterval(downloadTimerInterval);
 
@@ -242,14 +267,27 @@ function closeWarningModal() {
   clearInterval(downloadTimerInterval);
 }
 
+function openDonateModal() {
+  document.getElementById('donate-modal').classList.add('active');
+}
+
+function closeDonateModal() {
+  document.getElementById('donate-modal').classList.remove('active');
+}
+
 window.addEventListener('click', (event) => {
   const mdModal = document.getElementById('md-modal');
   const warningModal = document.getElementById('dl-warning-modal');
+  const donateModal = document.getElementById('donate-modal');
+  
   if (event.target === mdModal) {
     closeModal();
   }
   if (event.target === warningModal) {
     closeWarningModal();
+  }
+  if (event.target === donateModal) {
+    closeDonateModal();
   }
 });
 
