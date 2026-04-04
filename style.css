@@ -651,6 +651,7 @@ footer {
   .section-header { flex-direction: column; align-items: flex-start; gap: 16px; padding: 0 20px;}
   .dl-group { padding: 0 20px; }
   .dl-item { flex-direction: column; align-items: flex-start; }
-  .dl-item-right { width: 100%; justify-content: flex-start; }
+  .dl-item-right { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+  .dl-item-right .btn-dl { width: 100%; justify-content: center; }
   .modal-content { padding: 25px; }
 }
