@@ -1,3 +1,4 @@
+/* style.css */
 :root {
   --glass-bg: rgba(255, 182, 193, 0.08);
   --glass-border: rgba(255, 192, 203, 0.15);
@@ -232,24 +233,35 @@ nav {
   inset: 0;
   background: linear-gradient(to top, var(--glass-overlay) 0%, transparent 50%);
 }
-.card-badge {
+
+.badges-container {
   position: absolute;
-  top: 12px; right: 12px;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+
+.card-badge {
   font-size: 0.65rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   padding: 4px 10px;
   border-radius: 100px;
-  background: var(--glass-bg);
+  background: rgba(10, 5, 10, 0.5);
   border: 1px solid var(--glass-border);
-  color: var(--accent);
-  z-index: 2;
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   font-weight: 700;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
+
+.card-badge.new { color: #4ade80; border-color: rgba(74,222,128,0.4); background: rgba(10, 5, 10, 0.5); }
+.card-badge.stable { color: #60a5fa; border-color: rgba(96,165,250,0.4); background: rgba(10, 5, 10, 0.5); }
+.card-badge.pre-release { color: #f87171; border-color: rgba(248,113,113,0.4); background: rgba(10, 5, 10, 0.5); }
+.card-badge.beta { color: #fbbf24; border-color: rgba(251,191,36,0.4); background: rgba(10, 5, 10, 0.5); }
 
 .card-body { padding: 22px 24px 24px; }
 .card-title {
@@ -375,7 +387,6 @@ nav {
   align-items: center;
   gap: 8px;
 }
-.detail-eyebrow::before { content: '[*]'; }
 .detail-title {
   font-family: 'Syne', sans-serif;
   font-weight: 800;
@@ -509,6 +520,13 @@ nav {
 }
 .btn-dl.secondary:hover { background: var(--glass-border); }
 
+.btn-dl:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+  transform: none !important;
+}
+
 .tag-chip {
   font-size: 0.65rem;
   letter-spacing: 0.12em;
@@ -521,6 +539,7 @@ nav {
 .tag-chip.stable { color: #4ade80; border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.08); }
 .tag-chip.beta   { color: #fbbf24; border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.08); }
 .tag-chip.alpha  { color: #f87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.08); }
+.tag-chip.pre { color: #f87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.08); }
 
 .empty-note {
   text-align: center;
@@ -539,6 +558,80 @@ footer {
   letter-spacing: 0.06em;
 }
 
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--glass-overlay);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: var(--radius);
+  padding: 40px;
+  animation: cardIn 0.3s cubic-bezier(.22,.68,0,1.2);
+}
+
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  color: var(--text);
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.close-modal:hover {
+  color: var(--accent);
+}
+
+#md-content {
+  line-height: 1.6;
+}
+#md-content h1, #md-content h2, #md-content h3 {
+  font-family: 'Syne', sans-serif;
+  margin: 1.5em 0 0.5em;
+  color: var(--accent);
+}
+#md-content h1 { font-size: 2rem; margin-top: 0; }
+#md-content p { margin-bottom: 1em; color: var(--text); }
+#md-content pre {
+  background: var(--bg-color);
+  padding: 15px;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  margin-bottom: 1em;
+  border: 1px solid var(--glass-border);
+}
+#md-content code {
+  font-family: monospace;
+  background: var(--bg-color);
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+#md-content ul, #md-content ol {
+  margin-bottom: 1em;
+  padding-left: 20px;
+}
+
 @media (max-width: 768px) {
   nav { padding: 14px 20px; }
   .hero { padding: 40px 20px 50px; }
@@ -553,4 +646,5 @@ footer {
   .dl-group { padding: 0 20px; }
   .dl-item { flex-direction: column; align-items: flex-start; }
   .dl-item-right { width: 100%; justify-content: flex-start; }
+  .modal-content { padding: 25px; }
 }

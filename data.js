@@ -4,16 +4,22 @@ const OS_DATA = [
     name: "Nothing OS",
     hide: false,
     image: "banners/nothingos.jpg",
-    badge: "Port",
     shortDesc: "Nothing OS port with dot-matrix design.",
-    fullDesc: "A ported version of Nothing OS bringing the dot-matrix design and smooth performance to unsupported devices.",
-    changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-04-03/",
+    fullDesc: "A ported version of Nothing OS bringing the dot-matrix design and smooth performance to your devices.",
+    changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-04-03",
+    uploadDate: "2026-04-04",
+    guideFile: "guides/nothing-os.md",
     downloads: [
-      {
-        group: "Stable Ports",
+      /**{
+        group: "Stable Releases",
         items: [
-          { name: "Nothing OS 2.6 - Port", version: "v2.6.0", tag: "stable", device: "Marnie", meta: "Android 14 . 3.1 GB", url: "#" },
-          { name: "Nothing OS 2.6 - Port", version: "v2.6.0", tag: "stable", device: "Spes", meta: "Android 14 . 3.1 GB", url: "#" }
+          { name: "Nothing OS 4.0 Stable", version: "V1", tag: "STABLE", device: "Infinix GT 10 Pro", meta: "Android 16 . 3.70 GB", date: "2026-05-10", url: "#" }
+        ]
+      },**/
+      {
+        group: "Pre-Release",
+        items: [
+          { name: "Nothing OS 4.0 - Pre-Release 1", version: "X1", tag: "PRE", device: "Infinix GT 10 Pro", meta: "Android 16 . 3.68 GB", date: "2026-04-04", url: "https://sfl.gl/R2re" }
         ]
       }
     ]
@@ -23,15 +29,26 @@ const OS_DATA = [
     name: "Oxygen OS",
     hide: false,
     image: "banners/oxygenos.jpg",
-    badge: "Port",
     shortDesc: "Oxygen OS port from OnePlus devices.",
     fullDesc: "Experience Oxygen OS with its fast and smooth UI, ported directly from OnePlus firmwares.",
-    changelog: "https://telegra.ph/",
+    changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-01-25",
+    uploadDate: "2026-01-24",
+    guideFile: "guides/oxygen-os.md",
     downloads: [
       {
-        group: "Beta Ports",
+        group: "Stable LatestReleases",
         items: [
-          { name: "Oxygen OS 14 - Port", version: "v14.0", tag: "beta", device: "Alioth", meta: "Android 14 . 3.5 GB", url: "#" }
+          { name: "Oxygen OS 16 - Stable", version: "V1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 16 . 6.02 GB", date: "2026-01-24", url: "https://sfl.gl/AKZ43" },
+          { name: "Oxygen OS 16 - Stable", version: "V1", tag: "stable", device: "Tecno Camon 20 Pro 5G", meta: "Android 16 . 6.18 GB", date: "2026-01-24", url: "https://sfl.gl/T025mcZ" },
+          { name: "Oxygen OS 16 - Stable", version: "V1", tag: "stable", device: "Tecno Camon 20s Pro 5G", meta: "Android 16 . 6.19 GB", date: "2026-01-24", url: "https://sfl.gl/xbBO64" }
+        ]
+      },
+      {
+        group: "Android 15 Older Releases",
+        items: [
+          { name: "Oxygen OS 15 - Stable", version: "X1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 15 . 4.99 GB", date: "2025-10-22", url: "https://sfl.gl/AKZ43" },
+          { name: "Oxygen OS 15 - Stable", version: "X1", tag: "stable", device: "Tecno Camon 20 Pro 5G", meta: "Android 15 . 5.19 GB", date: "2025-10-22", url: "https://sfl.gl/Xzul" },
+          { name: "Oxygen OS 15 - Stable", version: "X1", tag: "stable", device: "Tecno Camon 20s Pro 5G", meta: "Android 15 . 5.19 GB", date: "2025-10-22", url: "https://sfl.gl/Xzul" }
         ]
       }
     ]
@@ -41,16 +58,28 @@ const OS_DATA = [
     name: "Color OS",
     hide: false,
     image: "banners/coloros.jpg",
-    badge: "Port",
     shortDesc: "Color OS port from OPPO.",
-    fullDesc: "Highly customizable Color OS experience ported from official OPPO releases.",
-    changelog: "https://telegra.ph/",
+    fullDesc: "Highly customizable Smart & Smooth Color OS experience ported from official OPPO & OnePlus releases.",
+    changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-01-04",
+    uploadDate: "2025-12-26",
+    guideFile: "guides/color-os.md",
     downloads: [
       {
-        group: "Stable Ports",
+        group: "Stable Releases",
         items: [
-          { name: "Color OS 14 - Port", version: "v14", tag: "stable", device: "Sweet", meta: "Android 14 . 4.0 GB", url: "#" },
-          { name: "Color OS 14 - Port", version: "v14", tag: "stable", device: "Marnie", meta: "Android 14 . 4.0 GB", url: "#" }
+          { name: "Color OS 16 - Stable", version: "X1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 16 . 6.38 GB", date: "2025-11-17", url: "https://sfl.gl/qPHDcaT" },
+          { name: "Color OS 16 - Stable", version: "X1", tag: "stable", device: "Infinix Zero 30 5G", meta: "Android 16 . 7.08 GB", date: "2025-12-24", url: "https://sfl.gl/v0YN3u" },
+          { name: "Color OS 16 - Stable", version: "X1", tag: "stable", device: "Infinix GT 20 Pro", meta: "Android 16 . 6.96 GB", date: "2025-12-26", url: "https://sfl.gl/sCpx9zUP" },
+          { name: "Color OS 16 - Stable", version: "X1", tag: "stable", device: "Tecno Camon 20 Pro 5G", meta: "Android 16 . 6.38 GB", date: "2025-12-25", url: "https://sfl.gl/47m3d" },
+          { name: "Color OS 16 - Stable", version: "X1", tag: "stable", device: "Tecno Camon 20s Pro 5G", meta: "Android 16 . 6.38 GB", date: "2025-12-25", url: "https://sfl.gl/KGvF9nSg" }
+        ]
+      },
+      {
+        group: "Android 15 Older Releases",
+        items: [
+          { name: "Color OS 15 - Stable", version: "V1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 15 . 5.61 GB", date: "2025-07-28", url: "https://sfl.gl/UBAm" },
+          { name: "Color OS 15 - Stable", version: "V1", tag: "stable", device: "Tecno Camon 20 Pro 5G", meta: "Android 15 . 5.78 GB", date: "2025-07-28", url: "https://sfl.gl/TAId27Ba" },
+          { name: "Color OS 15 - Stable", version: "V1", tag: "stable", device: "Tecno Camon 20s Pro 5G", meta: "Android 15 . 5.78 GB", date: "2025-07-28", url: "https://sfl.gl/iFJUnb" }
         ]
       }
     ]
@@ -60,15 +89,19 @@ const OS_DATA = [
     name: "Transsion OS",
     hide: false,
     image: "banners/hios.jpg",
-    badge: "Port",
     shortDesc: "Transsion ecosystem port (HiOS/XOS).",
     fullDesc: "Ported firmware from the Transsion ecosystem, featuring unique system apps and UI components.",
-    changelog: "https://telegra.ph/",
+    changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-09-30",
+    uploadDate: "2025-10-09",
+    guideFile: "guides/transsion-os.md",
     downloads: [
       {
-        group: "Testing Ports",
+        group: "HiOS Stable Releases",
         items: [
-          { name: "HiOS 13.6 - Port", version: "v13.6", tag: "alpha", device: "Spes", meta: "Android 13 . 2.8 GB", url: "#" }
+          { name: "HiOS 15.1.0 - Stable", version: "X1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 15 . 5.72 GB", date: "2025-10-03", url: "https://sfl.gl/M6hYob3" },
+          { name: "HiOS 15.1.0 - Stable", version: "X1", tag: "stable", device: "Infinix Zero 30 5G", meta: "Android 15 . 5.49 GB", date: "2025-10-09", url: "https://sfl.gl/fOq2Xci" },
+          { name: "HiOS 15.1.0 - Stable", version: "X1", tag: "stable", device: "Tecno Camon 20 Pro 5G", meta: "Android 15 . 5.71 GB", date: "2025-10-03", url: "https://sfl.gl/OhcO" },
+          { name: "HiOS 15.1.0 - Stable", version: "X1", tag: "stable", device: "Tecno Camon 20s Pro 5G", meta: "Android 15 . 5.71 GB", date: "2025-10-03", url: "https://sfl.gl/bM2Xw" }
         ]
       }
     ]
@@ -78,15 +111,24 @@ const OS_DATA = [
     name: "HelloUI",
     hide: false,
     image: "banners/helloui.jpg",
-    badge: "Port",
     shortDesc: "Motorola HelloUI port.",
-    fullDesc: "Clean and responsive HelloUI ported from recent Motorola devices.",
-    changelog: "https://telegra.ph/",
+    fullDesc: "Clean and smooth HelloUI ported from Motorola devices.",
+    changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-08-18",
+    uploadDate: "2025-09-08",
+    guideFile: "guides/hello-ui.md",
     downloads: [
       {
-        group: "Stable Ports",
+        group: "Stable Releases",
         items: [
-          { name: "HelloUI - Port", version: "v1.0", tag: "stable", device: "Alioth", meta: "Android 14 . 2.5 GB", url: "#" }
+          { name: "HelloUI - Stable", version: "X1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 15 . 5.21 GB", date: "2025-08-20", url: "https://sfl.gl/7oiZG3X" },
+          { name: "HelloUI - Stable", version: "X1", tag: "stable", device: "Tecno Camon 20 Pro 5G", meta: "Android 15 . 5.47 GB", date: "2025-08-20", url: "https://sfl.gl/jIcERI" },
+          { name: "HelloUI - Stable", version: "X1", tag: "stable", device: "Tecno Camon 20s Pro 5G", meta: "Android 15 . 5.10 GB", date: "2025-08-20", url: "https://sfl.gl/ogJS" }
+        ]
+      },
+      {
+        group: "Pre-Release",
+        items: [
+          { name: "HelloUI - Pre-Release", version: "X1", tag: "alpha", device: "Infinix Zero 30 5G", meta: "Android 15 . 5.00 GB", date: "2025-09-08", url: "https://sfl.gl/H66yWTON" }
         ]
       }
     ]
@@ -96,16 +138,16 @@ const OS_DATA = [
     name: "HyperOS",
     hide: false,
     image: "banners/hyperos.jpg",
-    badge: "Port",
     shortDesc: "Xiaomi HyperOS port.",
-    fullDesc: "The new Xiaomi HyperOS ecosystem ported to non-Xiaomi or legacy devices.",
-    changelog: "https://telegra.ph/",
+    fullDesc: "The Xiaomi HyperOS ported to your devices.",
+    changelog: "https://telegra.ph/gayper-206-01-26",
+    uploadDate: "2026-01-27",
+    guideFile: "guides/hyper-os.md",
     downloads: [
       {
-        group: "Stable Ports",
+        group: "Stable Releases",
         items: [
-          { name: "HyperOS 1.0 - Port", version: "v1.0.4", tag: "stable", device: "Sweet", meta: "Android 14 . 4.2 GB", url: "#" },
-          { name: "HyperOS 1.0 - Port", version: "v1.0.4", tag: "stable", device: "Alioth", meta: "Android 14 . 4.2 GB", url: "#" }
+          { name: "HyperOS 2.0.6 - Stable", version: "X2", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 15 . 4.06 GB", date: "2026-01-27", url: "https://sfl.gl/xk3CEY4" }
         ]
       }
     ]
@@ -115,15 +157,16 @@ const OS_DATA = [
     name: "Origin OS",
     hide: true,
     image: "banners/originos.jpg",
-    badge: "Port",
     shortDesc: "Vivo Origin OS port.",
     fullDesc: "Origin OS port featuring the distinctive grid layout and dynamic widgets.",
     changelog: "https://telegra.ph/",
+    uploadDate: "2026-01-10",
+    guideFile: "guides/origin-os.md",
     downloads: [
       {
         group: "Alpha Ports",
         items: [
-          { name: "Origin OS 4 - Port", version: "v4.0", tag: "alpha", device: "Marnie", meta: "Android 14 . 4.5 GB", url: "#" }
+          { name: "Origin OS 4 - Port", version: "v4.0", tag: "alpha", device: "Marnie", meta: "Android 14 . 4.5 GB", date: "2026-01-10", url: "#" }
         ]
       }
     ]
