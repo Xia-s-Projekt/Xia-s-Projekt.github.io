@@ -29,7 +29,33 @@ function getLatestDate(os) {
   return latest;
 }
 
-function buildCards() {
+function populateHomeDeviceFilter() {
+  const allDevices = new Set();
+  OS_DATA.forEach(os => {
+    if (!os.hide && os.downloads) {
+      os.downloads.forEach(group => {
+        if (group.items) {
+          group.items.forEach(item => {
+            if (item.device) allDevices.add(item.device);
+          });
+        }
+      });
+    }
+  });
+  
+  const uniqueDevices = Array.from(allDevices).sort();
+  const container = document.getElementById('home-device-filter-container');
+  if (container && uniqueDevices.length > 0) {
+    container.innerHTML = `
+      <select id="home-device-select" class="filter-select" onchange="buildCards(this.value)">
+        <option value="all">All Devices</option>
+        ${uniqueDevices.map(d => `<option value="${d}">${d}</option>`).join('')}
+      </select>
+    `;
+  }
+}
+
+function buildCards(deviceFilter = 'all') {
   const container = document.getElementById('cards-container');
   container.innerHTML = '';
   
@@ -40,10 +66,36 @@ function buildCards() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  visibleOS.forEach((os, i) => {
-    const totalDownloads = os.downloads.reduce((a, g) => a + g.items.length, 0);
-    const latestTime = getLatestDate(os);
-    
+  let cardsRendered = 0;
+
+  visibleOS.forEach(os => {
+    let totalDownloads = 0;
+    let tags = new Set();
+    let latestTime = 0;
+
+    if (os.downloads) {
+      os.downloads.forEach(group => {
+        if (group.items) {
+          const validItems = group.items.filter(item => deviceFilter === 'all' || item.device === deviceFilter);
+          totalDownloads += validItems.length;
+          
+          validItems.forEach(item => {
+            if (item.tag) tags.add(item.tag.toLowerCase());
+            if (item.date) {
+              const time = new Date(item.date).getTime();
+              if (time > latestTime) latestTime = time;
+            }
+          });
+        }
+      });
+    }
+
+    if (deviceFilter !== 'all' && totalDownloads === 0) return;
+
+    if (deviceFilter === 'all') {
+      latestTime = getLatestDate(os);
+    }
+
     let isNew = false;
     let formattedDate = "Unknown";
     
@@ -53,11 +105,6 @@ function buildCards() {
       isNew = uploadDateObj.getTime() === today.getTime();
       formattedDate = new Date(latestTime).toISOString().split('T')[0];
     }
-
-    const tags = new Set();
-    os.downloads.forEach(group => {
-      group.items.forEach(item => tags.add(item.tag.toLowerCase()));
-    });
 
     let statusBadgeHTML = '';
     if (tags.has('stable')) {
@@ -73,7 +120,7 @@ function buildCards() {
 
     const card = document.createElement('div');
     card.className = 'os-card';
-    card.style.animationDelay = `${i * 0.08}s`;
+    card.style.animationDelay = `${cardsRendered * 0.08}s`;
     card.onclick = () => navigateToOS(os.id);
     card.innerHTML = `
       <div class="card-img">
@@ -92,7 +139,12 @@ function buildCards() {
         </div>
       </div>`;
     container.appendChild(card);
+    cardsRendered++;
   });
+
+  if (cardsRendered === 0) {
+    container.innerHTML = '<div class="empty-note" style="grid-column: 1 / -1;">No ROMs available for the selected device.</div>';
+  }
 }
 
 function navigateToOS(id) {
@@ -102,6 +154,9 @@ function navigateToOS(id) {
 
 function navigateHome() {
   history.pushState({}, '', window.location.pathname);
+  const homeSelect = document.getElementById('home-device-select');
+  if (homeSelect) homeSelect.value = 'all';
+  buildCards('all');
   goHome();
 }
 
@@ -130,6 +185,7 @@ window.renderDownloads = function(id, filterValue) {
                 <span class="tag-chip ${item.tag.toLowerCase()}">${item.tag}</span>
                 <span class="tag-chip secondary" style="color:var(--muted);border-color:var(--glass-border);background:var(--glass-bg)">${item.version}</span>
                 <button class="btn-dl primary" onclick="showDownloadWarning('${item.url}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download</button>
+                ${item.url2 ? `<button class="btn-dl secondary" onclick="showDownloadWarning('${item.url2}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> Mirror</button>` : ''}
               </div>
             </div>
           `).join('')}
@@ -297,10 +353,11 @@ window.addEventListener('popstate', () => {
   if (osParam) {
     openDetail(osParam);
   } else {
-    goHome();
+    navigateHome();
   }
 });
 
+populateHomeDeviceFilter();
 buildCards();
 
 const initialParams = new URLSearchParams(window.location.search);

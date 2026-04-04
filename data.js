@@ -12,7 +12,14 @@ const OS_DATA = [
       {
         group: "Pre-Release",
         items: [
-          { name: "Nothing OS 4.0 - Pre-Release 1", version: "X1", tag: "PRE", device: "Infinix GT 10 Pro", meta: "Android 16 . 3.68 GB", date: "2026-04-04", url: "https://sfl.gl/R2re" }
+          { name: "Nothing OS 4.0 - Pre-Release 1", 
+            version: "X1", tag: "PRE", 
+            device: "Infinix GT 10 Pro", 
+            meta: "Android 16 . 3.68 GB", 
+            date: "2026-04-04", 
+            url: "https://sfl.gl/R2re", 
+            url2: "https://sfl.gl/Xiz9eNR5"
+          }
         ]
       }
     ]
