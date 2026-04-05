@@ -67,6 +67,7 @@ function buildCards(deviceFilter = 'all') {
   today.setHours(0, 0, 0, 0);
 
   let cardsRendered = 0;
+  const fragment = document.createDocumentFragment();
 
   visibleOS.forEach(os => {
     let totalDownloads = 0;
@@ -124,7 +125,7 @@ function buildCards(deviceFilter = 'all') {
     card.onclick = () => navigateToOS(os.id);
     card.innerHTML = `
       <div class="card-img">
-        <img src="${os.image}" alt="${os.name}" onerror="this.src='images/placeholder.jpg'" />
+        <img src="${os.image}" alt="${os.name}" loading="lazy" decoding="async" onerror="this.src='assets/images/placeholder.jpg'" />
         <div class="card-img-overlay"></div>
         <div class="badges-container">
           ${finalBadges}
@@ -138,12 +139,14 @@ function buildCards(deviceFilter = 'all') {
           <div class="card-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
         </div>
       </div>`;
-    container.appendChild(card);
+    fragment.appendChild(card);
     cardsRendered++;
   });
 
   if (cardsRendered === 0) {
     container.innerHTML = '<div class="empty-note" style="grid-column: 1 / -1;">No ROMs available for the selected device.</div>';
+  } else {
+    container.appendChild(fragment);
   }
 }
 
@@ -228,7 +231,7 @@ function openDetail(id) {
   document.getElementById('detail-content').innerHTML = `
     <div class="detail-hero">
       <div class="detail-img">
-        <img src="${os.image}" alt="${os.name}" onerror="this.src='images/placeholder.jpg'" />
+        <img src="${os.image}" alt="${os.name}" fetchpriority="high" decoding="sync" onerror="this.src='assets/images/placeholder.jpg'" />
       </div>
       <div class="detail-info">
         <div class="detail-eyebrow">[*] ${detailBadge}</div>
@@ -262,7 +265,7 @@ function goHome() {
   document.getElementById('page-detail').classList.remove('active');
   document.getElementById('page-home').classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  document.title = "Xia's Projekt - Download Center";
+  document.title = "Xia's Projekt - Products";
 }
 
 function openModal(fileUrl) {
