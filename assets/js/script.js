@@ -171,7 +171,14 @@ window.renderDownloads = function(id, filterValue) {
   let dlGroupsHTML = '';
   
   os.downloads.forEach((group, gi) => {
-    const filteredItems = group.items.filter(item => filterValue === 'all' || item.device === filterValue);
+    const filteredItems = group.items
+      .filter(item => filterValue === 'all' || item.device === filterValue)
+      .sort((a, b) => {
+        const dateA = a.date ? new Date(a.date).getTime() : 0;
+        const dateB = b.date ? new Date(b.date).getTime() : 0;
+        return dateB - dateA;
+      });
+
     if (filteredItems.length === 0) return;
 
     dlGroupsHTML += `
