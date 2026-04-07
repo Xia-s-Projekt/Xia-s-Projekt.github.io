@@ -125,7 +125,7 @@ function buildCards(deviceFilter = 'all') {
     card.onclick = () => navigateToOS(os.id);
     card.innerHTML = `
       <div class="card-img">
-        <img src="${os.image}" alt="${os.name}" loading="lazy" decoding="async" onerror="this.src='assets/images/placeholder.jpg'" />
+        <img src="${os.image}" alt="${os.name}" onerror="this.src='assets/images/placeholder.jpg'" />
         <div class="card-img-overlay"></div>
         <div class="badges-container">
           ${finalBadges}
@@ -240,7 +240,10 @@ function openDetail(id) {
         <div class="action-buttons">
           <button onclick="openModal('${os.guideFile}')" class="btn-dl primary">How to flash</button>
           <a href="https://t.me/screenxia" target="_blank" rel="noopener" class="btn-dl secondary">Screenshots</a>
-          <a href="${os.changelog || 'https://telegra.ph/'}" target="_blank" rel="noopener" class="btn-dl secondary">Changelogs</a>
+          ${(os.changelog && os.changelog.includes('telegra.ph')) 
+  ? `<button onclick="openReaderModal('${os.changelog}')" class="btn-dl secondary">Changelogs</button>` 
+  : `<a href="${os.changelog || 'https://telegra.ph/'}" target="_blank" rel="noopener" class="btn-dl secondary">Changelogs</a>`
+}
         </div>
       </div>
     </div>
@@ -338,16 +341,12 @@ window.addEventListener('click', (event) => {
   const mdModal = document.getElementById('md-modal');
   const warningModal = document.getElementById('dl-warning-modal');
   const donateModal = document.getElementById('donate-modal');
+  const readerModal = document.getElementById('reader-modal');
   
-  if (event.target === mdModal) {
-    closeModal();
-  }
-  if (event.target === warningModal) {
-    closeWarningModal();
-  }
-  if (event.target === donateModal) {
-    closeDonateModal();
-  }
+  if (event.target === mdModal) closeModal();
+  if (event.target === warningModal) closeWarningModal();
+  if (event.target === donateModal) closeDonateModal();
+  if (event.target === readerModal) closeReaderModal();
 });
 
 window.addEventListener('popstate', () => {
@@ -375,4 +374,85 @@ if (initialOs) {
   }
 } else {
   goHome();
+}
+
+async function openReaderModal(url) {
+  const modal = document.getElementById('reader-modal');
+  const titleEl = document.getElementById('reader-title');
+  const contentEl = document.getElementById('reader-content');
+
+  titleEl.innerText = "Loading...";
+  contentEl.innerHTML = `<div style="text-align: center; color: var(--muted); padding: 40px 0;">Fetching changelog...</div>`;
+  modal.classList.add('active');
+
+  try {
+    const path = url.split('/').pop();
+    const response = await fetch(`https://api.telegra.ph/getPage/${path}?return_content=true`);
+    const data = await response.json();
+
+    if (data.ok) {
+      titleEl.innerText = data.result.title;
+      contentEl.innerHTML = parseTelegraphNodes(data.result.content);
+    } else {
+      throw new Error('Post not found');
+    }
+  } catch (error) {
+    titleEl.innerText = "Error";
+    contentEl.innerHTML = `
+      <div style="text-align: center; color: var(--muted); padding: 40px 0;">
+        Failed to load content. <br><br>
+        <a href="${url}" target="_blank" class="btn-dl primary" style="margin-top: 15px;">Open in new tab instead</a>
+      </div>`;
+  }
+}
+
+function parseTelegraphNodes(nodes) {
+  if (!nodes) return '';
+  let html = '';
+  
+  for (const node of nodes) {
+    if (typeof node === 'string') {
+      html += node.replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;")
+                  .replace(/\n/g, "<br>");
+    } else {
+      let { tag, attrs, children } = node;
+      let attrStr = '';
+      
+      if (attrs) {
+         if (tag === 'img' && attrs.src && attrs.src.startsWith('/')) {
+            attrs.src = 'https://telegra.ph' + attrs.src;
+         }
+         for (const [key, value] of Object.entries(attrs)) {
+            attrStr += ` ${key}="${value.toString().replace(/"/g, '&quot;')}"`;
+         }
+      }
+      
+      let styleStr = '';
+      if (tag === 'p') styleStr = ' style="margin-bottom: 1em; color: var(--text); white-space: pre-wrap;"';
+      else if (tag === 'a') styleStr = ' style="color: var(--accent); text-decoration: underline;" target="_blank"';
+      else if (tag === 'ul') styleStr = ' style="list-style-type: disc; padding-left: 20px; margin-bottom: 1em; color: var(--text);"';
+      else if (tag === 'ol') styleStr = ' style="list-style-type: decimal; padding-left: 20px; margin-bottom: 1em; color: var(--text);"';
+      else if (tag === 'h3' || tag === 'h4') styleStr = ' style="font-family: \'Syne\', sans-serif; margin: 1.5em 0 0.5em; color: var(--accent); font-size: 1.25rem; font-weight: bold;"';
+      else if (tag === 'blockquote') styleStr = ' style="border-left: 4px solid var(--glass-border); padding-left: 15px; margin-bottom: 1em; font-style: italic; color: var(--muted);"';
+      else if (tag === 'img') styleStr = ' style="max-width: 100%; border-radius: var(--radius-sm); margin: 15px 0; border: 1px solid var(--glass-border);"';
+      else if (tag === 'code') styleStr = ' style="font-family: monospace; background: var(--bg-color); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--glass-border);"';
+
+      html += `<${tag}${attrStr}${styleStr}>`;
+      
+      if (children) {
+        html += parseTelegraphNodes(children);
+      }
+      
+      if (!['img', 'br', 'hr'].includes(tag)) {
+        html += `</${tag}>`;
+      }
+    }
+  }
+  return html;
+}
+
+function closeReaderModal() {
+  document.getElementById('reader-modal').classList.remove('active');
 }
