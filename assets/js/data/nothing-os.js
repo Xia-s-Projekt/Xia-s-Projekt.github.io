@@ -17,7 +17,7 @@ OS_DATA.push({
           meta: "Android 16 . 3.12 GB", 
           date: "2026-05-10", 
           url: "https://sfl.gl/gdcW", 
-         // url2: ""
+          url2: "https://sfl.gl/25YU"
         }
       ]
     },
