@@ -9,9 +9,9 @@ OS_DATA.push({
   guideFile: "guides/nothing-os.md",
   downloads: [
     {
-      group: "Stable-Release",
+      group: "Stable Releases",
       items: [
-        { name: "Nothing OS 4.0 - Stable-Release", 
+        { name: "Nothing OS 4.0 - Stable", 
           version: "X1.2", tag: "Stable", 
           device: "Infinix GT 10 Pro", 
           meta: "Android 16 . 3.12 GB", 
