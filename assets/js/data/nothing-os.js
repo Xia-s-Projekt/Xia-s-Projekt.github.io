@@ -2,7 +2,7 @@ OS_DATA.push({
   id: "nothing-os",
   name: "Nothing OS",
   hide: false,
-  image: "assets/images/banners/nothingos.png",
+  image: "assets/images/banners/nothingos.jpg",
   shortDesc: "Nothing OS port with dot-matrix design.",
   fullDesc: "A ported version of Nothing OS bringing the dot-matrix design and smooth performance to your devices.",
   changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-05-10",
@@ -16,7 +16,7 @@ OS_DATA.push({
           device: "Infinix GT 10 Pro", 
           meta: "Android 16 . 3.12 GB", 
           date: "2026-05-10", 
-          url: "https://drive.google.com/file/d/1iwQajIWNIPf--_EA5edqF1nEUHwKcmlL/view?usp=drive_link", 
+          url: "https://sfl.gl/gdcW", 
          // url2: ""
         }
       ]
