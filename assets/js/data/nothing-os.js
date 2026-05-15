@@ -11,6 +11,14 @@ OS_DATA.push({
     {
       group: "Stable Releases",
       items: [
+        { name: "Nothing OS 4.1 - Stable", 
+          version: "X2", tag: "Stable", 
+          device: "Infinix GT 10 Pro", 
+          meta: "Android 16 . 3.28 GB", 
+          date: "2026-05-15", 
+          url: "https://sfl.gl/u2G1NJgF", 
+          url2: "https://sfl.gl/qY6TyCI"
+        },
         { name: "Nothing OS 4.0 - Stable", 
           version: "X1.2", tag: "Stable", 
           device: "Infinix GT 10 Pro", 
