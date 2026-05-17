@@ -17,7 +17,7 @@ OS_DATA.push({
           meta: "Android 16 . 3.28 GB", 
           date: "2026-05-15", 
           url: "https://sfl.gl/u2G1NJgF", 
-          url2: "https://sfl.gl/qY6TyCI"
+          url2: "https://sfl.gl/sudRx"
         },
         { name: "Nothing OS 4.0 - Stable", 
           version: "X1.2", tag: "Stable", 
