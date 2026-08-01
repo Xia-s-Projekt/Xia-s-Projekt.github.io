@@ -11,8 +11,8 @@ OS_DATA.push({
     {
       group: "XOS Stable Releases",
       items: [
-        { name: "XOS 16.2.0 - Core", version: "X1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 16 . 7.5 GB", date: "2026-08-02", url: "https://sfl.gl/w9x5"},
-        { name: "XOS 16.2.0 - PIF", version: "X1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 16 . 7.5 GB", date: "2026-08-02", url: "https://sfl.gl/R0fe8iS"}
+        { name: "XOS 16.2.0 - Core", version: "X1.1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 16 . 7.5 GB", date: "2026-08-02", url: "https://sfl.gl/w9x5"},
+        { name: "XOS 16.2.0 - PIF", version: "X1.1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 16 . 7.5 GB", date: "2026-08-02", url: "https://sfl.gl/R0fe8iS"}
       ]
     },
     {
