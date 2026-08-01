@@ -1,3 +1,33 @@
+// --- AUTO-PUBLISH FILTER ---
+// Removes items with a release date in the future so they automatically appear when the day comes.
+(function filterFutureReleases() {
+  const now = new Date();
+  const todayStr = now.getFullYear() + '-' + 
+                   String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                   String(now.getDate()).padStart(2, '0');
+
+  OS_DATA.forEach(os => {
+    if (os.downloads) {
+      os.downloads.forEach(group => {
+        if (group.items) {
+          group.items = group.items.filter(item => {
+            if (!item.date) return true;
+            return item.date <= todayStr;
+          });
+        }
+      });
+      // Clean up empty groups
+      os.downloads = os.downloads.filter(group => group.items && group.items.length > 0);
+      
+      // If no downloads left, hide the OS completely
+      if (os.downloads.length === 0) {
+        os.hide = true;
+      }
+    }
+  });
+})();
+// ---------------------------
+
 const themeToggle = document.getElementById('theme-toggle');
 const currentTheme = localStorage.getItem('theme') || 'dark';
 document.documentElement.setAttribute('data-theme', currentTheme);
