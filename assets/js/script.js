@@ -28,15 +28,40 @@
 })();
 // ---------------------------
 
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 const themeToggle = document.getElementById('theme-toggle');
 const currentTheme = localStorage.getItem('theme') || 'dark';
 document.documentElement.setAttribute('data-theme', currentTheme);
 
-themeToggle.addEventListener('click', () => {
+function updateThemeIcon(theme) {
+  const icon = document.getElementById('dock-theme-icon');
+  if (!icon) return;
+  icon.innerHTML = theme === 'dark'
+    ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+    : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+}
+
+function toggleTheme() {
   const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
-});
+  updateThemeIcon(theme);
+}
+
+if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+const dockTheme = document.getElementById('dock-theme');
+if (dockTheme) dockTheme.addEventListener('click', toggleTheme);
+updateThemeIcon(currentTheme);
+
+function setDockContext() {
+  const dock = document.getElementById('mobile-dock');
+  if (!dock) return;
+  dock.classList.toggle('is-detail', document.getElementById('page-detail').classList.contains('active'));
+}
+
+const dockBack = document.getElementById('dock-back');
+if (dockBack) dockBack.addEventListener('click', navigateHome);
 
 document.querySelectorAll('#footer-year, .footer-year-d').forEach(el => el.textContent = new Date().getFullYear());
 
@@ -59,6 +84,157 @@ function getLatestDate(os) {
   return latest;
 }
 
+function renderLatestDrop() {
+  const strip = document.getElementById('latest-strip');
+  if (!strip) return;
+
+  const candidates = [];
+  OS_DATA.forEach(os => {
+    if (os.hide || !os.downloads) return;
+    os.downloads.forEach(group => {
+      if (!group.items) return;
+      group.items.forEach(item => {
+        if (item.date) candidates.push({ os, item });
+      });
+    });
+  });
+
+  if (!candidates.length) {
+    strip.style.display = 'none';
+    return;
+  }
+
+  candidates.sort((a, b) => b.item.date.localeCompare(a.item.date));
+  const top = candidates[0];
+
+  const nameEl = document.getElementById('latest-drop-name');
+  const dateEl = document.getElementById('latest-drop-date');
+  const chipEl = document.getElementById('latest-drop-chip');
+  const versionEl = document.getElementById('latest-drop-version');
+  if (nameEl) nameEl.textContent = top.item.name;
+  if (versionEl) versionEl.textContent = top.item.version || '';
+  if (dateEl) dateEl.textContent = 'Added ' + top.item.date;
+  if (chipEl) {
+    chipEl.textContent = top.item.tag;
+    chipEl.className = 'tag-chip ' + top.item.tag.toLowerCase();
+    chipEl.hidden = false;
+  }
+  strip.href = '?os=' + top.os.id;
+  strip.addEventListener('click', (e) => {
+    e.preventDefault();
+    navigateToOS(top.os.id);
+  });
+}
+
+let currentDeviceFilter = 'all';
+let currentView = localStorage.getItem('view-mode') || (window.matchMedia('(max-width: 768px)').matches ? 'list' : 'grid');
+
+function setView(mode) {
+  currentView = mode;
+  localStorage.setItem('view-mode', mode);
+  document.querySelectorAll('#view-toggle .view-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === mode);
+  });
+  const container = document.getElementById('cards-container');
+  if (container) container.classList.toggle('view-list', mode === 'list');
+  buildCards(currentDeviceFilter);
+}
+
+function initViewToggle() {
+  const toggle = document.getElementById('view-toggle');
+  if (!toggle) return;
+  toggle.querySelectorAll('.view-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === currentView);
+    btn.addEventListener('click', () => setView(btn.dataset.view));
+  });
+  const container = document.getElementById('cards-container');
+  if (container) container.classList.toggle('view-list', currentView === 'list');
+}
+
+const deviceSelectStore = {};
+let deviceSelectSeq = 0;
+
+function deviceSelectHTML(cbName, arg, options, current) {
+  const key = 'ds' + (++deviceSelectSeq);
+  deviceSelectStore[key] = { cb: cbName, arg: arg || '', options: options, value: current };
+  return `
+    <div class="device-select" data-device-select data-key="${key}">
+      <button type="button" class="filter-select filter-trigger" aria-haspopup="listbox" aria-expanded="false">
+        <span class="filter-trigger-label"></span>
+        <svg class="filter-caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <ul class="filter-dropdown" role="listbox"></ul>
+    </div>
+  `;
+}
+
+function setDeviceSelectValue(wrap, value) {
+  const stored = deviceSelectStore[wrap.dataset.key];
+  if (!stored) return;
+  stored.value = value;
+  if (stored.refresh) stored.refresh();
+}
+
+function bindDeviceSelects() {
+  document.querySelectorAll('[data-device-select]').forEach(wrap => {
+    if (wrap.dataset.bound) return;
+    wrap.dataset.bound = 'true';
+    const stored = deviceSelectStore[wrap.dataset.key];
+    if (!stored) return;
+
+    const trigger = wrap.querySelector('.filter-trigger');
+    const dropdown = wrap.querySelector('.filter-dropdown');
+    const label = trigger.querySelector('.filter-trigger-label');
+
+    stored.refresh = function() {
+      const current = stored.options.find(o => o.value === stored.value) || {};
+      label.textContent = current.label !== undefined ? current.label : stored.value;
+      dropdown.querySelectorAll('.filter-option').forEach(opt => {
+        const active = opt.dataset.value === stored.value;
+        opt.classList.toggle('active', active);
+        opt.setAttribute('aria-selected', String(active));
+      });
+    };
+
+    dropdown.innerHTML = stored.options.map(opt =>
+      `<li role="option" aria-selected="false" tabindex="0" class="filter-option" data-value="${opt.value}">${opt.label}</li>`
+    ).join('');
+
+    const close = () => { dropdown.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); };
+    const open = () => { dropdown.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); };
+    const choose = (value) => {
+      stored.value = value;
+      stored.refresh();
+      close();
+      const fn = window[stored.cb];
+      if (typeof fn === 'function') fn.apply(null, stored.arg ? [stored.arg, value] : [value]);
+    };
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (dropdown.classList.contains('open')) close(); else open();
+    });
+    dropdown.addEventListener('click', (e) => {
+      const opt = e.target.closest('.filter-option');
+      if (opt) choose(opt.dataset.value);
+    });
+    dropdown.addEventListener('keydown', (e) => {
+      const opts = Array.from(dropdown.querySelectorAll('.filter-option'));
+      const idx = opts.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (opts[(idx + 1) % opts.length]) opts[(idx + 1) % opts.length].focus(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); if (opts[(idx - 1 + opts.length) % opts.length]) opts[(idx - 1 + opts.length) % opts.length].focus(); }
+      else if (e.key === 'Enter' || e.key === ' ') {
+        const focused = document.activeElement;
+        if (focused && focused.classList.contains('filter-option')) { e.preventDefault(); choose(focused.dataset.value); }
+      }
+    });
+    document.addEventListener('click', (e) => { if (!wrap.contains(e.target)) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+    stored.refresh();
+  });
+}
+
 function populateHomeDeviceFilter() {
   const allDevices = new Set();
   OS_DATA.forEach(os => {
@@ -72,16 +248,13 @@ function populateHomeDeviceFilter() {
       });
     }
   });
-  
+
   const uniqueDevices = Array.from(allDevices).sort();
   const container = document.getElementById('home-device-filter-container');
-  if (container && uniqueDevices.length > 0) {
-    container.innerHTML = `
-      <select id="home-device-select" class="filter-select" onchange="buildCards(this.value)">
-        <option value="all">All Devices</option>
-        ${uniqueDevices.map(d => `<option value="${d}">${d}</option>`).join('')}
-      </select>
-    `;
+  if (container) {
+    const options = [{ value: 'all', label: 'All Devices' }].concat(uniqueDevices.map(d => ({ value: d, label: d })));
+    container.innerHTML = deviceSelectHTML('buildCards', '', options, 'all');
+    bindDeviceSelects();
   }
 }
 
@@ -139,42 +312,61 @@ function buildCards(deviceFilter = 'all') {
 
     let statusBadgeHTML = '';
     if (tags.has('stable')) {
-      statusBadgeHTML = `<div class="card-badge stable">STABLE</div>`;
+      statusBadgeHTML = `<span class="card-badge stable">STABLE</span>`;
     } else if (tags.has('pre') || tags.has('alpha')) {
-      statusBadgeHTML = `<div class="card-badge pre-release">PRE-RELEASE</div>`;
+      statusBadgeHTML = `<span class="card-badge pre-release">PRE-RELEASE</span>`;
     } else if (tags.has('beta')) {
-      statusBadgeHTML = `<div class="card-badge beta">BETA</div>`;
+      statusBadgeHTML = `<span class="card-badge beta">BETA</span>`;
     }
 
-    let newBadgeHTML = isNew ? `<div class="card-badge new">NEW</div>` : '';
+    let newBadgeHTML = isNew ? `<span class="card-badge new">NEW</span>` : '';
     let finalBadges = newBadgeHTML + statusBadgeHTML;
+    const downloadLabel = `${totalDownloads} download${totalDownloads !== 1 ? 's' : ''}`;
 
-    const card = document.createElement('div');
-    card.className = 'os-card';
-    card.style.animationDelay = `${cardsRendered * 0.08}s`;
+    const card = document.createElement('article');
+    card.className = 'os-card' + (currentView === 'list' ? ' list-row' : '');
+    card.style.animationDelay = `${cardsRendered * (reducedMotion ? 0 : 0.07)}s`;
     card.onclick = () => navigateToOS(os.id);
-    card.innerHTML = `
-      <div class="card-img">
-        <img src="${os.image}" alt="${os.name}" onerror="this.src='assets/images/placeholder.jpg'" />
-        <div class="card-img-overlay"></div>
-        <div class="badges-container">
-          ${finalBadges}
+
+    if (currentView === 'list') {
+      card.innerHTML = `
+        <div class="list-row-img">
+          <img src="${os.image}" alt="" loading="lazy" onerror="this.src='assets/images/placeholder.svg'" />
         </div>
-      </div>
-      <div class="card-body">
-        <div class="card-title">${os.name}</div>
-        <div class="card-desc">${os.shortDesc}</div>
-        <div class="card-footer">
-          <div class="card-count"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> ${totalDownloads} download${totalDownloads !== 1 ? 's' : ''} available <br> Updated: ${formattedDate}</div>
-          <div class="card-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+        <div class="list-row-main">
+          <div class="card-title">${os.name}</div>
+          <div class="card-desc">${os.shortDesc}</div>
+          <div class="list-row-meta">
+            ${finalBadges}
+            <span class="list-count">${downloadLabel}</span>
+            <span class="list-updated">Updated ${formattedDate}</span>
+          </div>
         </div>
-      </div>`;
+        <div class="card-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+      `;
+    } else {
+      card.innerHTML = `
+        <div class="card-img">
+          <img src="${os.image}" alt="" loading="lazy" onerror="this.src='assets/images/placeholder.svg'" />
+          <div class="card-img-overlay"></div>
+          ${finalBadges ? `<div class="badges-container">${finalBadges}</div>` : ''}
+        </div>
+        <div class="card-body">
+          <div class="card-title">${os.name}</div>
+          <div class="card-desc">${os.shortDesc}</div>
+          <div class="card-footer">
+            <div class="card-count"><span class="count">${downloadLabel}</span><span class="updated">Updated ${formattedDate}</span></div>
+            <div class="card-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+          </div>
+        </div>
+      `;
+    }
     fragment.appendChild(card);
     cardsRendered++;
   });
 
   if (cardsRendered === 0) {
-    container.innerHTML = '<div class="empty-note" style="grid-column: 1 / -1;">No ROMs available for the selected device.</div>';
+    container.innerHTML = '<div class="empty-note">No ROMs available for the selected device.</div>';
   } else {
     container.appendChild(fragment);
   }
@@ -187,8 +379,8 @@ function navigateToOS(id) {
 
 function navigateHome() {
   history.pushState({}, '', window.location.pathname);
-  const homeSelect = document.getElementById('home-device-select');
-  if (homeSelect) homeSelect.value = 'all';
+  const homeFilter = document.querySelector('#home-device-filter-container [data-device-select]');
+  if (homeFilter) setDeviceSelectValue(homeFilter, 'all');
   buildCards('all');
   goHome();
 }
@@ -213,19 +405,20 @@ window.renderDownloads = function(id, filterValue) {
 
     dlGroupsHTML += `
       <div class="dl-group">
-        <div class="dl-group-title">${group.group}</div>
+        <div class="dl-group-title">${group.group}<span class="dl-group-count">${filteredItems.length}</span></div>
         <div class="dl-list">
           ${filteredItems.map((item, ii) => `
-            <div class="dl-item" style="animation-delay:${(gi * filteredItems.length + ii) * 0.06}s">
+            <div class="dl-item" style="animation-delay:${(gi * filteredItems.length + ii) * (reducedMotion ? 0 : 0.06)}s">
               <div class="dl-item-left">
                 <div class="dl-item-name">${item.name}</div>
-                <div class="dl-item-meta">${item.device ? `${item.device} . ` : ''}${item.meta} . Uploaded: ${item.date}</div>
+                <div class="dl-item-meta">${item.device ? `${item.device} / ` : ''}${item.meta}</div>
+                ${item.date ? `<div class="dl-item-date">Uploaded ${item.date}</div>` : ''}
               </div>
               <div class="dl-item-right">
                 <span class="tag-chip ${item.tag.toLowerCase()}">${item.tag}</span>
-                <span class="tag-chip secondary" style="color:var(--muted);border-color:var(--glass-border);background:var(--glass-bg)">${item.version}</span>
-                <button class="btn-dl primary" onclick="showDownloadWarning('${item.url}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download</button>
-                ${item.url2 ? `<button class="btn-dl secondary" onclick="showDownloadWarning('${item.url2}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> Mirror</button>` : ''}
+                <span class="version-chip">${item.version}</span>
+                <button class="btn-dl primary" data-url="${item.url}" onclick="showDownloadWarning(this.dataset.url)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download</button>
+                ${item.url2 ? `<button class="btn-dl secondary" data-url="${item.url2}" onclick="showDownloadWarning(this.dataset.url)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> Mirror</button>` : ''}
               </div>
             </div>
           `).join('')}
@@ -255,20 +448,14 @@ function openDetail(id) {
   
   let filterHTML = '';
   if (uniqueDevices.length > 0) {
-    filterHTML = `
-      <div class="filter-controls">
-        <select id="device-filter" class="filter-select" onchange="renderDownloads('${id}', this.value)">
-          <option value="all">All Devices</option>
-          ${uniqueDevices.map(d => `<option value="${d}">${d}</option>`).join('')}
-        </select>
-      </div>
-    `;
+    const options = [{ value: 'all', label: 'All Devices' }].concat(uniqueDevices.map(d => ({ value: d, label: d })));
+    filterHTML = `<div class="filter-controls">${deviceSelectHTML('renderDownloads', id, options, 'all')}</div>`;
   }
 
   document.getElementById('detail-content').innerHTML = `
     <div class="detail-hero">
       <div class="detail-img">
-        <img src="${os.image}" alt="${os.name}" fetchpriority="high" decoding="sync" onerror="this.src='assets/images/placeholder.jpg'" />
+        <img src="${os.image}" alt="${os.name}" fetchpriority="high" decoding="sync" onerror="this.src='assets/images/placeholder.svg'" />
       </div>
       <div class="detail-info">
         <div class="detail-eyebrow">[*] ${detailBadge}</div>
@@ -285,8 +472,8 @@ function openDetail(id) {
       </div>
     </div>
     <div class="downloads-section">
-      <div class="section-header">
-        <div class="section-label" style="margin:0; padding:0;"><span>Download Files</span></div>
+      <div class="downloads-heading">
+        <h3>Download Files</h3>
         ${filterHTML}
       </div>
       <div id="dl-list-container"></div>
@@ -294,9 +481,11 @@ function openDetail(id) {
   `;
 
   renderDownloads(id, 'all');
+  bindDeviceSelects();
 
   document.getElementById('page-home').classList.remove('active');
   document.getElementById('page-detail').classList.add('active');
+  setDockContext();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   document.title = `${os.name} - Xia's Projekt`;
 }
@@ -304,6 +493,7 @@ function openDetail(id) {
 function goHome() {
   document.getElementById('page-detail').classList.remove('active');
   document.getElementById('page-home').classList.add('active');
+  setDockContext();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   document.title = "Xia's Projekt - Products";
 }
@@ -386,6 +576,15 @@ window.addEventListener('click', (event) => {
   if (event.target === readerModal) closeReaderModal();
 });
 
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeModal();
+    closeWarningModal();
+    closeDonateModal();
+    closeReaderModal();
+  }
+});
+
 window.addEventListener('popstate', () => {
   const params = new URLSearchParams(window.location.search);
   const osParam = params.get('os');
@@ -397,7 +596,9 @@ window.addEventListener('popstate', () => {
 });
 
 populateHomeDeviceFilter();
+initViewToggle();
 buildCards();
+renderLatestDrop();
 
 const initialParams = new URLSearchParams(window.location.search);
 const initialOs = initialParams.get('os');
