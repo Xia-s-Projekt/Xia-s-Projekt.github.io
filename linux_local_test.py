@@ -11,6 +11,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
+    # Local dev: never let the browser serve a stale stylesheet or page.
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-store, max-age=0")
+        self.send_header("Pragma", "no-cache")
+        self.send_header("Expires", "0")
+        super().end_headers()
+
 # Force socket release on Linux to prevent "Address already in use" on rapid restarts
 socketserver.TCPServer.allow_reuse_address = True
 

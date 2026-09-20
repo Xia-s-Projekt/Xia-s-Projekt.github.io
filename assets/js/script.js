@@ -127,7 +127,7 @@ function renderLatestDrop() {
 }
 
 let currentDeviceFilter = 'all';
-let currentView = localStorage.getItem('view-mode') || (window.matchMedia('(max-width: 768px)').matches ? 'list' : 'grid');
+let currentView = localStorage.getItem('view-mode') || (window.matchMedia('(min-width: 1025px) and (hover: hover) and (pointer: fine)').matches ? 'grid' : 'list');
 
 function setView(mode) {
   currentView = mode;

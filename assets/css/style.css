@@ -134,13 +134,13 @@ body::after {
 }
 .skip-link:focus { top: 12px; }
 
-/* ---------- Navigation ---------- */
+/* ---------- Navigation (desktop only; every other viewport gets the dock) ---------- */
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--nav-h);
   z-index: 100;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: space-between;
   padding: 0 40px;
@@ -162,16 +162,18 @@ nav {
 .nav-controls { display: flex; align-items: center; gap: 10px; }
 .nav-btn { min-height: 38px; padding: 0 16px; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
 
-/* ---------- Floating pill nav (mobile only) ---------- */
+/* ---------- Floating pill nav (default; top bar is the exception) ---------- */
 .mobile-dock {
   position: fixed;
-  left: 0; right: 0;
+  top: auto;
   bottom: calc(16px + env(safe-area-inset-bottom));
+  height: auto;
+  left: 0; right: 0;
   margin: 0 auto;
   width: max-content;
   max-width: calc(100vw - 24px);
   z-index: 100;
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
@@ -1273,6 +1275,26 @@ nav {
   .mobile-dock { display: flex; bottom: calc(10px + env(safe-area-inset-bottom)); padding: 6px; }
   .dock-brand { display: none; }
   .dock-btn { min-height: 44px; padding: 0 14px; font-size: 0.64rem; }
+}
+
+/* desktop pointers only: top app bar replaces the dock */
+@media (min-width: 1025px) and (hover: hover) and (pointer: fine) {
+  nav { display: flex; }
+  .mobile-dock { display: none; }
+  .back-btn { display: inline-flex; }
+  #page-home { padding-top: calc(var(--nav-h) + 40px); }
+  #page-detail { padding-top: calc(var(--nav-h) + 16px); }
+}
+
+/* touch-primary devices at any width (e.g. a phone in landscape):
+   bottom dock, no top bar, nothing pinned to the top */
+@media (hover: none) and (pointer: coarse) and (min-width: 901px) {
+  nav { display: none; }
+  .back-btn { display: none; }
+  .mobile-dock { display: flex; }
+  .dock-brand { display: none; }
+  #page-home { padding-top: 24px; padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
+  #page-detail { padding-top: 16px; padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
 }
 
 /* accessibility: honor reduced motion */
