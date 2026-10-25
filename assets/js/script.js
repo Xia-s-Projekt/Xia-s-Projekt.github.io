@@ -415,6 +415,7 @@ window.renderDownloads = function(id, filterValue) {
                 ${item.date ? `<div class="dl-item-date">Uploaded ${item.date}</div>` : ''}
               </div>
               <div class="dl-item-right">
+                ${changelogButtonHTML(item.changelog)}
                 <span class="tag-chip ${item.tag.toLowerCase()}">${item.tag}</span>
                 <span class="version-chip">${item.version}</span>
                 <button class="btn-dl primary" data-url="${item.url}" onclick="showDownloadWarning(this.dataset.url)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download</button>
@@ -429,6 +430,13 @@ window.renderDownloads = function(id, filterValue) {
 
   container.innerHTML = dlGroupsHTML || '<div class="empty-note">No downloads available for the selected device.</div>';
 };
+
+function changelogButtonHTML(url, cls = 'secondary') {
+  if (!url) return '';
+  return url.includes('telegra.ph')
+    ? `<button onclick="openReaderModal('${url}')" class="btn-dl ${cls}">Changelogs</button>`
+    : `<a href="${url}" target="_blank" rel="noopener" class="btn-dl ${cls}">Changelogs</a>`;
+}
 
 function openDetail(id) {
   const os = OS_DATA.find(o => o.id === id);
@@ -445,6 +453,8 @@ function openDetail(id) {
   else if (tags.has('beta')) detailBadge = "BETA";
 
   const uniqueDevices = [...new Set(os.downloads.flatMap(g => g.items.map(i => i.device)).filter(Boolean))];
+  // per-item changelogs win; the hero button stays only as a fallback for OSes without them
+  const hasItemChangelogs = os.downloads.some(g => g.items.some(i => i.changelog));
   
   let filterHTML = '';
   if (uniqueDevices.length > 0) {
@@ -463,11 +473,8 @@ function openDetail(id) {
         <div class="detail-desc">${os.fullDesc}</div>
         <div class="action-buttons">
           <button onclick="openModal('${os.guideFile}')" class="btn-dl primary">How to flash</button>
-          <a href="https://t.me/screenxia" target="_blank" rel="noopener" class="btn-dl secondary">Screenshots</a>
-          ${(os.changelog && os.changelog.includes('telegra.ph')) 
-  ? `<button onclick="openReaderModal('${os.changelog}')" class="btn-dl secondary">Changelogs</button>` 
-  : `<a href="${os.changelog || 'https://telegra.ph/'}" target="_blank" rel="noopener" class="btn-dl secondary">Changelogs</a>`
-}
+          <a href="${os.screenshots || 'https://t.me/screenxia'}" target="_blank" rel="noopener" class="btn-dl secondary">Screenshots</a>
+          ${hasItemChangelogs ? '' : changelogButtonHTML(os.changelog)}
         </div>
       </div>
     </div>

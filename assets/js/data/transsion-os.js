@@ -6,13 +6,15 @@ OS_DATA.push({
   shortDesc: "Transsion ecosystem port (HiOS/XOS).",
   fullDesc: "Ported firmware from the Transsion ecosystem, featuring unique system apps and UI components.",
   changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-08-01-2",
+  screenshots: "https://t.me/screenxia/557",
   guideFile: "guides/transsion-os.md",
   downloads: [
     {
       group: "XOS Stable Releases",
       items: [
-        { name: "XOS 16.2.0 - Core", version: "X1.1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 16 . 7.5 GB", date: "2026-08-02", url: "https://sfl.gl/w9x5"},
-        { name: "XOS 16.2.0 - PIF", version: "X1.1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 16 . 7.5 GB", date: "2026-08-02", url: "https://sfl.gl/R0fe8iS"}
+        { name: "XOS 16.3.0 - CorexKaeru", version: "X2.5", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 16 . 8.0 GB", date: "2026-10-25", url: "https://sfl.gl/f8DYu", changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-10-25-2"},
+        { name: "XOS 16.2.0 - Core", version: "X1.1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 16 . 7.5 GB", date: "2026-08-02", url: "https://sfl.gl/w9x5", changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-08-01-2"},
+        { name: "XOS 16.2.0 - PIF", version: "X1.1", tag: "stable", device: "Infinix GT 10 Pro", meta: "Android 16 . 7.5 GB", date: "2026-08-02", url: "https://sfl.gl/R0fe8iS", changelog: "https://telegra.ph/Flashing-Step-Notes-Changelog-Known-Bugs-08-01-2"}
       ]
     },
     {

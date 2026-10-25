@@ -39,7 +39,7 @@ Single-page app driven by `OS_DATA`, a global array of OS objects.
 - `renderLatestDrop()` — fills the hero `latest-strip` with the newest dated visible OS (name, version, date, optional tag chip) and links it to `?os=<id>`.
 - `toggleTheme()` / `setDockContext()` — theme switching (shared by the desktop nav Theme button and the mobile dock Theme button) and the state-aware mobile dock Back button.
 - `showDownloadWarning(url)` — every download/mirror button goes through this 5s-countdown modal before `window.open`.
-- `openReaderModal(url)` / `parseTelegraphNodes(nodes)` — changelog viewer. If `os.changelog` is a `telegra.ph` URL it calls the Telegraph API (`https://api.telegra.ph/getPage/{slug}?return_content=true`) and converts the JSON node tree to HTML.
+- `openReaderModal(url)` / `parseTelegraphNodes(nodes)` — changelog viewer. Any `telegra.ph` URL (hero-level `os.changelog` or per-item `item.changelog`) calls the Telegraph API (`https://api.telegra.ph/getPage/{slug}?return_content=true`) and converts the JSON node tree to HTML. `changelogButtonHTML(url, cls)` builds the button/link for either source.
 
 ## Data format (`assets/js/data/*.js`)
 
@@ -54,6 +54,7 @@ OS_DATA.push({
   shortDesc: "...",            // card subtitle
   fullDesc: "...",             // detail page description
   changelog: "https://telegra.ph/...", // if it contains "telegra.ph" → in-site reader; else an <a href> to it
+  screenshots: "https://t.me/...",     // optional; hero Screenshots button, defaults to https://t.me/screenxia
   guideFile: "guides/nothing-os.md",
   downloads: [
     {
@@ -76,6 +77,7 @@ Item fields:
 - `date` — `YYYY-MM-DD`. The newest date per OS drives card sorting and "Updated:" text. Future dates auto-hide (see data flow).
 - `url` — primary download (currently sfl.gl shortlinks).
 - `url2` — optional mirror; renders a second "Mirror" button. Omit the key entirely rather than leaving it empty.
+- `changelog` — optional per-item changelog URL (same telegra.ph → in-site reader rule as `os.changelog`). Renders a "Changelogs" button at the LEFT of the item's tag chip. If ANY item in the OS has one, the hero-level "Changelogs" button is suppressed, so each build gets its own notes (e.g. XOS X2.5 vs the X1.1 builds).
 
 ## Gotchas and non-obvious details
 
